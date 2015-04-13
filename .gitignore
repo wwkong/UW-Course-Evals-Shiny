@@ -1,0 +1,5 @@
+*.RData
+*.pdf
+*.RHistory
+_cache_/*
+shiny/rsconnect/*
