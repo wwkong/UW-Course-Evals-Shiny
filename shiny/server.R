@@ -70,12 +70,10 @@ shinyServer(function(input, output) {
     
     if (is.null(Dataset()) ||
         is.null(input$vars) || 
-        length(input$vars)==0 ||
-        is.null(input$fvar) ||
-        is.null(input$fval)) 
+        length(input$vars)==0) 
       return(NULL)
     
-    else
+    else if (!is.null(input$fvar) && !is.null(input$fval))
       if (input$fvar != "None" && input$fval != "None")
         return(subset(Dataset(),
                       subset=eval(isolate(parse(text=
@@ -87,6 +85,8 @@ shinyServer(function(input, output) {
                                                   )))))[,input$vars,drop=FALSE])
       else 
         return(Dataset()[,input$vars,drop=FALSE])
+    else 
+      return(Dataset()[,input$vars,drop=FALSE])
     
   }, 
   options = list(lengthMenu = c(10, 30, 50), 
@@ -178,10 +178,14 @@ shinyServer(function(input, output) {
     agg.df <- eval(parse(text=in.text1))
     agg.df$Percent <- with(agg.df, Response.n / Sample.n)
     
-    
     # Sort and plot
     if (input$sval !="None") {
       sort.df <- agg.df
+      # Sort
+      percent.df <- subset(sort.df, subset=Response==input$sval)
+      ordering <- order(percent.df$Percent)
+      sort.df[[input$gvar]] <- factor(sort.df[[input$gvar]],
+                                      levels(sort.df[[input$gvar]])[ordering])
       # Arrange levels
       levels <- levels(sort.df$Response)
       ordering.df <- data.frame(Response=c(input$sval, 
@@ -189,11 +193,6 @@ shinyServer(function(input, output) {
                                 Ranking=1:length(levels(sort.df$Response)))
       sort.df <- merge(sort.df,ordering.df,by="Response")
       sort.df <- sort.df[order(sort.df$Ranking),]
-      # Sort
-      percent.df <- subset(sort.df, subset=Response==input$sval)
-      ordering <- order(percent.df$Percent)
-      sort.df[[input$gvar]] <- factor(sort.df[[input$gvar]],
-                                      levels(sort.df[[input$gvar]])[ordering])
     } else {
       sort.df <- agg.df
     }
@@ -203,7 +202,7 @@ shinyServer(function(input, output) {
                         coord_flip() + 
                         geom_bar(position = \"fill\", stat=\"identity\") + 
                         scale_y_continuous(labels = percent_format()) +
-                        + scale_fill_gradient(low=\"#CEF6CE\",high=\"#0B610B\")")
+                        scale_fill_brewer(palette=\"Greens\")")
     sort.gg <- eval(parse(text=in.text2))
     print(sort.gg)
   })
