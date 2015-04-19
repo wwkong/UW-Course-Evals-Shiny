@@ -44,5 +44,22 @@ instructors.map <- data.frame(o_Instructor = vec.instructors,
 random.df <- merge(random.df, instructors.map,
                    by.x = "Instructor", by.y="o_Instructor")
 random.df <- subset(random.df, select=-Instructor)
-save(random.df,file="shiny/evalData_random.RData")
-rm(vec.instructors,vec.names.random)
+
+# Order the factors
+response.levels <- c("Excellent","Too High","Always","Very Interesting","90-100%",
+                      "Very helpful","Too much","0-2 hours",
+                    "Good","Somewhat too high","Most of the time","Interesting","75-90%",
+                      "Helpful","Somewhat too much","3-6 hours",
+                    "Satisfactory","Just right","Often enough","Not Interesting","50-75%",
+                      "Not helpful","Okay","7-10 hours",
+                    "Unsatisfactory","Somewhat too low","Not often enough","Very poor",
+                      "No work assigned","No printed course notes","25-50%",
+                    "No text required","Somewhat too little","11-15 hours",
+                      "Too low","Never","< 25%","Too little","> 15 hours",
+                    "I did not seek help" ,"No opinion")
+order.df <- random.df
+order.df$Response <- factor(order.df$Response,levels=response.levels) 
+
+# Output and clean up
+save(order.df,file="shiny/evalData_random.RData")
+rm(output.df,response.levels)

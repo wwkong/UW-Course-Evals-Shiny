@@ -17,6 +17,16 @@ shinyUI(fluidPage(
     conditionalPanel(
       condition="input.conditionedPanels==1",
       htmlOutput("varselect")),
+
+    # Filter Variable:
+    conditionalPanel(
+      condition="input.conditionedPanels==1",
+      htmlOutput("filterselect")),
+
+    # Filter Value:
+    conditionalPanel(
+      condition="input.conditionedPanels==1",
+      htmlOutput("filtervalue")),
     
     # Subset String:
     conditionalPanel(
@@ -26,7 +36,7 @@ shinyUI(fluidPage(
     # Submit Subset
     conditionalPanel(
       condition="input.conditionedPanels==1",
-      actionButton("subsetButton","Load Data with Subset String")),
+      actionButton("subsetButton","Reload Data")),
     
 #------------------------------ Plot Data ------------------------------ 
 
@@ -38,7 +48,12 @@ shinyUI(fluidPage(
     # Group selection:
     conditionalPanel(
       condition="input.conditionedPanels==2",
-      htmlOutput("group"))
+      htmlOutput("group")),
+    
+    # Sorting Value:
+    conditionalPanel(
+      condition="input.conditionedPanels==2",
+      htmlOutput("sortvalue"))
     
   ),
 
